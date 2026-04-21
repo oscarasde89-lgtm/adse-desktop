@@ -1,0 +1,66 @@
+{
+  "name": "adse-desktop",
+  "version": "1.0.0",
+  "description": "ADSE · Agente Director Secundaria Educación — App de escritorio",
+  "main": "main.js",
+  "author": "Agentes de Educación",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "build:backend": "python build_backend.py",
+    "build:win": "electron-builder --win --x64",
+    "build:mac": "electron-builder --mac",
+    "build:all": "npm run build:backend && npm run build:win"
+  },
+  "build": {
+    "appId": "mx.agenteseducacion.adse",
+    "productName": "ADSE",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "splash.html",
+      "package.json",
+      "!backend/**/*",
+      "!**/__pycache__/**"
+    ],
+    "extraResources": [
+      {
+        "from": "backend_dist",
+        "to": "backend",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "artifactName": "ADSE-Setup-${version}.${ext}",
+      "signtoolOptions": null,
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "license": "build/license.txt"
+    },
+    "mac": {
+      "target": [{ "target": "dmg", "arch": ["x64", "arm64"] }],
+      "icon": "build/icon.icns",
+      "category": "public.app-category.education",
+      "artifactName": "ADSE-${version}.${ext}"
+    }
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "dependencies": {
+    "electron-store": "^10.0.0"
+  }
+}

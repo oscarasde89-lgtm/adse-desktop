@@ -1,0 +1,32 @@
+TÉRMINOS Y CONDICIONES DE USO — ADSE (Agente Director Secundaria Educación)
+================================================================================
+
+Al instalar y usar este programa usted acepta los siguientes términos:
+
+1. LICENCIA DE USO
+   Este software se licencia, no se vende. Su licencia es personal e intransferible
+   y queda vinculada al correo electrónico registrado durante la compra.
+
+2. PRIVACIDAD Y DATOS
+   Sus conversaciones, documentos y planeaciones se almacenan EXCLUSIVAMENTE en
+   su dispositivo, cifrados con su contraseña. Agentes de Educación NO tiene
+   acceso a dichos datos y NO los transmite a ningún servidor.
+   El único dato que reside en nuestros servidores es su correo electrónico,
+   el hash de su contraseña, y el estado de su suscripción, necesarios para
+   validar su licencia y permitirle recuperar el acceso.
+
+3. SUSCRIPCIÓN
+   El acceso a la aplicación requiere una suscripción activa (mensual o anual).
+   Al expirar la suscripción la aplicación deja de aceptar inicio de sesión
+   hasta que se renueve. Los datos locales en su dispositivo permanecen
+   accesibles solo a través de la aplicación.
+
+4. RESPONSABILIDAD
+   El software se provee "tal cual". Agentes de Educación no se hace responsable
+   por pérdidas de datos locales en caso de falla de su dispositivo. Se recomienda
+   realizar respaldos periódicos.
+
+5. CONTACTO
+   Dudas y soporte: contacto@agenteseducacion.com.mx
+
+© 2026 Agentes de Educación · Hecho en México

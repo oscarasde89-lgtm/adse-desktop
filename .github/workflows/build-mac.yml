@@ -1,0 +1,67 @@
+name: Build Mac DMG
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-mac:
+    runs-on: macos-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python deps (for backend bundle)
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller fastapi "uvicorn[standard]" anthropic python-dotenv pydantic scikit-learn bcrypt python-docx requests websockets
+
+      - name: Build backend with PyInstaller
+        run: python build_backend.py
+
+      - name: Install Electron deps
+        run: npm ci || npm install
+
+      - name: Remove icon reference (icon.icns missing)
+        run: |
+          node -e "const p=require('./package.json'); if(p.build && p.build.mac) delete p.build.mac.icon; require('fs').writeFileSync('package.json', JSON.stringify(p, null, 2));"
+
+      - name: Build DMG (universal: x64 + arm64)
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder --mac --x64 --arm64
+
+      - name: List output
+        run: ls -lh dist/
+
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ADSE-mac-dmg
+          path: dist/*.dmg
+          retention-days: 30
+
+      - name: Upload to droplet via SSH (only if secrets set)
+        if: ${{ secrets.DROPLET_HOST != '' }}
+        env:
+          DROPLET_HOST: ${{ secrets.DROPLET_HOST }}
+          DROPLET_USER: ${{ secrets.DROPLET_USER }}
+          DROPLET_PASS: ${{ secrets.DROPLET_PASS }}
+        run: |
+          brew install sshpass || true
+          for f in dist/*.dmg; do
+            sshpass -p "$DROPLET_PASS" scp -o StrictHostKeyChecking=no "$f" "$DROPLET_USER@$DROPLET_HOST:/var/www/html/downloads/"
+          done

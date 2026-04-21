@@ -1,0 +1,12 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+gunicorn==23.0.0
+anthropic==0.39.0
+python-dotenv==1.0.1
+pydantic==2.9.2
+scikit-learn==1.5.2
+stripe==10.12.0
+requests==2.32.3
+bcrypt==4.2.0
+python-docx==1.1.2
+websockets==13.1
