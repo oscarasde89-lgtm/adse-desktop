@@ -32,11 +32,20 @@
       {
         "from": "backend_dist",
         "to": "backend",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "win": {
-      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
       "artifactName": "ADSE-Setup-${version}.${ext}",
       "signtoolOptions": null,
       "signAndEditExecutable": false
@@ -50,7 +59,15 @@
       "license": "build/license.txt"
     },
     "mac": {
-      "target": [{ "target": "dmg", "arch": ["x64", "arm64"] }],
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
       "icon": "build/icon.icns",
       "category": "public.app-category.education",
       "artifactName": "ADSE-${version}.${ext}"
@@ -61,6 +78,6 @@
     "electron-builder": "^25.1.8"
   },
   "dependencies": {
-    "electron-store": "^10.0.0"
+    "electron-store": "^8.2.0"
   }
 }

@@ -726,7 +726,11 @@ if __name__ == "__main__":
 """
     print(banner)
     os.makedirs(WEB_DIR, exist_ok=True)
-    host = os.getenv("ADSE_HOST", "0.0.0.0")
+    host = os.getenv("ADSE_HOST", "127.0.0.1")
     port = int(os.getenv("ADSE_PORT", "8006"))
-    reload = os.getenv("ADSE_RELOAD", "1") == "1"
-    uvicorn.run("servidor_adse:app", host=host, port=port, reload=reload)
+    # reload=False por defecto (producción). Solo activar en dev con ADSE_RELOAD=1
+    reload = os.getenv("ADSE_RELOAD", "0") == "1"
+    if reload:
+        uvicorn.run("servidor_adse:app", host=host, port=port, reload=True)
+    else:
+        uvicorn.run(app, host=host, port=port)

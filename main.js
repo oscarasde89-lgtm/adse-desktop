@@ -15,12 +15,49 @@ const fs = require('fs');
 const net = require('net');
 const { spawn } = require('child_process');
 const https = require('https');
+const os = require('os');
 
-const Store = require('electron-store').default || require('electron-store');
-const store = new Store({
-  name: 'adse-config',
-  encryptionKey: 'adse-v1-do-not-change',   // NO es seguridad real, solo ofuscación
+// ====== LOGGING A ARCHIVO (debug) ======
+const LOG_PATH = path.join(os.tmpdir(), 'adse-main.log');
+function logFile(msg) {
+  try {
+    fs.appendFileSync(LOG_PATH, `[${new Date().toISOString()}] ${msg}\n`);
+  } catch (_) {}
+}
+logFile('====== ADSE main.js cargado ======');
+logFile('app.isPackaged=' + app.isPackaged);
+logFile('process.resourcesPath=' + process.resourcesPath);
+logFile('userData=' + app.getPath('userData'));
+
+process.on('uncaughtException', (err) => {
+  logFile('UNCAUGHT: ' + (err.stack || err.message || err));
+  try {
+    dialog.showErrorBox('Error ADSE', String(err.stack || err.message || err) + '\n\nLog: ' + LOG_PATH);
+  } catch (_) {}
 });
+process.on('unhandledRejection', (err) => {
+  logFile('UNHANDLED REJECTION: ' + (err && err.stack ? err.stack : err));
+});
+
+let Store;
+try {
+  Store = require('electron-store');
+  logFile('electron-store cargado OK');
+} catch (e) {
+  logFile('ERROR cargando electron-store: ' + e.message);
+  throw e;
+}
+let store;
+try {
+  store = new Store({
+    name: 'adse-config',
+    encryptionKey: 'adse-v1-do-not-change',   // NO es seguridad real, solo ofuscación
+  });
+  logFile('store instanciado OK');
+} catch (e) {
+  logFile('ERROR instanciando store: ' + e.message);
+  throw e;
+}
 
 const LICENCIAS_URL = 'https://agenteseducacion.com.mx/api/licencia';
 const IS_DEV = !app.isPackaged;
@@ -94,6 +131,7 @@ async function launchBackend() {
       ADSE_PORT: String(backendPort),
       ADSE_HOST: '127.0.0.1',
       ADSE_MODE: 'desktop',
+      ADSE_RELOAD: '0',
       ADSE_DATA_DIR: path.join(app.getPath('userData'), 'data'),
     },
     stdio: IS_DEV ? 'inherit' : 'ignore',
@@ -227,10 +265,14 @@ ipcMain.handle('licencia:salir', () => { app.quit(); });
 
 // ========= Lifecycle =========
 app.whenReady().then(async () => {
+  logFile('app.whenReady');
   createSplash();
+  logFile('splash creada');
   try {
     await launchBackend();
+    logFile('backend arrancado en puerto ' + backendPort);
   } catch (e) {
+    logFile('ERROR launchBackend: ' + (e.stack || e.message));
     dialog.showErrorBox('No se pudo iniciar ADSE', 'El backend no respondió. Reinicia la app.\n\n' + e.message);
     app.quit();
     return;

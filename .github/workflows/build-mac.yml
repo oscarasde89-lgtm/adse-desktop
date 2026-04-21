@@ -53,15 +53,3 @@ jobs:
           name: ADSE-mac-dmg
           path: dist/*.dmg
           retention-days: 30
-
-      - name: Upload to droplet via SSH (only if secrets set)
-        if: ${{ secrets.DROPLET_HOST != '' }}
-        env:
-          DROPLET_HOST: ${{ secrets.DROPLET_HOST }}
-          DROPLET_USER: ${{ secrets.DROPLET_USER }}
-          DROPLET_PASS: ${{ secrets.DROPLET_PASS }}
-        run: |
-          brew install sshpass || true
-          for f in dist/*.dmg; do
-            sshpass -p "$DROPLET_PASS" scp -o StrictHostKeyChecking=no "$f" "$DROPLET_USER@$DROPLET_HOST:/var/www/html/downloads/"
-          done
